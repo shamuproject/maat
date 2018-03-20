@@ -16,7 +16,7 @@ URL = 'https://github.com/shamuproject/maat'
 AUTHOR = 'CETI Foundation'
 
 # What packages are required for this module to be executed?
-REQUIRED = ['Pillow', 'git+https://github.com/hMatoba/Piexif.git']
+REQUIRED = []
 
 here = os.path.abspath(os.path.dirname(__file__))
 
