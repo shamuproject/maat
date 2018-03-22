@@ -3,4 +3,5 @@ sphinx_rtd_theme
 pytest
 pytest-cov
 pytest-mock
+click
 git+https://github.com/shamuproject/mavconn.git
