@@ -38,7 +38,7 @@ setup(
     author=AUTHOR,
     # author_email=EMAIL,
     url=URL,
-    py_modules=['maat'],
+    packages=['maat'],
     entry_points={
         'console_scripts': ['maat=maat.cli:main'],
     },
