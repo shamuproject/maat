@@ -78,15 +78,15 @@ def calculate_azimuth_elevation(source, dest):
     distance = haversine(here,plane) * 1000
     altitude_diff = dest[2] - source[2]
     angular_drop = distance /(2*(6.371*1000000))
-    azimuth_angle = math.degrees(math.atan2(altitude_diff, distance) - angular_drop)
+    elevation_angle = math.degrees(math.atan2(altitude_diff, distance) - angular_drop)
 
     
     print(compass_bearing)
     print(distance)
     print(angular_drop)
-    print(azimuth_angle)
+    print(elevation_angle)
 
-    return compass_bearing, azimuth_angle
+    return compass_bearing, elevation_angle
     
 
 # antennalocation Class

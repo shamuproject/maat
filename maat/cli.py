@@ -19,6 +19,7 @@ def main(ip, loc, system, component):
     # hand mavfile to mavconn constructor
     # add_timer(heartbeat) heartbeat function ^
     # Use closures to register 2 handles for global
+    #stay in context manager until signal.interrupt
 
 
 if __name__ == '__main__':
