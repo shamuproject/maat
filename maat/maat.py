@@ -1,12 +1,9 @@
 import click
+import math
+from haversine import haversine
 from mavconn import MAVLinkConnection
 
 
-@click.command()
-@click.argument('ip')
-@click.option('--loc', nargs=3, type=float, help='Groundstation coordinates (signed deg) lat, long, altitude (meters)')
-@click.option('--system', type=int, help='System ID [1-255]')
-@click.option('--component', type=int, help='Component ID [1-255]')
 class Args:
 
     def __init__(self, ip, loc, system, component):
@@ -16,15 +13,9 @@ class Args:
         self.lat=loc[0]
         self.long=loc[1]
         self.altitude=loc[2]
+        self.loc = loc[0], loc[1], loc[2]
         self.mavsystem = system
         self.mavcomponent = component
-        print(self.ip_addr)
-        print(self.ip_port)
-        print(self.lat)
-        print(self.long)
-        print(self.altitude)
-        print(self.mavsystem)
-        print(self.mavcomponent)
 
 
 def heartbeat():
@@ -60,20 +51,42 @@ def printer(system, component, azimuth, elevation):
 def calculate_azimuth_elevation(source, dest):
     #inputs are two triples (tuples) with lat, long, altitude
     #return azimuth and elevation from source to dest
-    pass
+    if (type(source) != tuple) or (type(dest) != tuple):
+        raise TypeError("Only tuples are supported as arguments")
 
+    lat1 = math.radians(source[0])
+    lat2 = math.radians(dest[0])
 
-def main():
-    args = Args()
-    # parse command line arguments
-    # setup mavlink mavfile (UDP)
-        # Give system, component, IP connecting, port connecting to
-    # hand mavfile to mavconn constructor
-    # add_timer(heartbeat) heartbeat function ^
-    # Use closures to register 2 handles for global
+    diffLong = math.radians(dest[1] - source[1])
+
+    x = math.sin(diffLong) * math.cos(lat2)
+    y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
+            * math.cos(lat2) * math.cos(diffLong))
+
+    initial_bearing = math.atan2(x, y)
+
+    # Now we have the initial bearing but math.atan2 return values
+    # from -180° to + 180° which is not what we want for a compass bearing
+    # The solution is to normalize the initial bearing as shown below
+    initial_bearing = math.degrees(initial_bearing)
+    compass_bearing = (initial_bearing + 360) % 360
     
-if __name__ == '__main__':
-    main()
+    # azimuth is calculated assuming a small distance in relation to radius of Earth
+    here = (source[0], source[1])
+    plane = (dest[0], dest[1])
+    
+    distance = haversine(here,plane) * 1000
+    altitude_diff = dest[2] - source[2]
+    angular_drop = distance /(2*(6.371*1000000))
+    azimuth_angle = math.degrees(math.atan2(altitude_diff, distance) - angular_drop)
+
+    
+    print(compass_bearing)
+    print(distance)
+    print(angular_drop)
+    print(azimuth_angle)
+
+    return compass_bearing, azimuth_angle
     
 
 # antennalocation Class

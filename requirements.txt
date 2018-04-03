@@ -4,4 +4,5 @@ pytest
 pytest-cov
 pytest-mock
 click
+haversine
 git+https://github.com/shamuproject/mavconn.git
