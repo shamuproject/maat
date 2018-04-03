@@ -6,16 +6,25 @@ from mavconn import MAVLinkConnection
 @click.argument('ip')
 @click.option('--loc', nargs=3, type=float, help='Groundstation coordinates (signed deg) lat, long, altitude (meters)')
 @click.option('--system', type=int, help='System ID [1-255]')
-@click.option('--component', type=int, help-'Component ID [1-255]')
+@click.option('--component', type=int, help='Component ID [1-255]')
 class Args:
 
-    def __init__(self, ip, loc, mavaddress):
-        self.ip=ip
-        self.loc=loc
-        self.mavaddr = mavaddress
-        print(self.ip)
-        print(self.loc)
-        print(self.mavaddr)
+    def __init__(self, ip, loc, system, component):
+        ip_addr_port = ip.split(':')
+        self.ip_addr= ip_addr_port[0]
+        self.ip_port= ip_addr_port[1]
+        self.lat=loc[0]
+        self.long=loc[1]
+        self.altitude=loc[2]
+        self.mavsystem = system
+        self.mavcomponent = component
+        print(self.ip_addr)
+        print(self.ip_port)
+        print(self.lat)
+        print(self.long)
+        print(self.altitude)
+        print(self.mavsystem)
+        print(self.mavcomponent)
 
 
 def heartbeat():
