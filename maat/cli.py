@@ -3,6 +3,8 @@
 import click
 from .__version__ import __version__
 from .maat import Args, calculate_azimuth_elevation
+from pymavlink import mavutil
+from mavconn import MAVLinkConnection
 
 @click.command()
 @click.argument('ip')
@@ -16,7 +18,10 @@ def main(ip, loc, system, component):
     calculate_azimuth_elevation(args.loc, test_dest)
     # setup mavlink mavfile (UDP)
     # Give system, component, IP connecting, port connecting to
+    mav = mavutil.mavlink_connection('udpout:' + args.ip,
+        source_system=args.mavsystem, source_component=args.mavcomponent)
     # hand mavfile to mavconn constructor
+    with 
     # add_timer(heartbeat) heartbeat function ^
     # Use closures to register 2 handles for global
     #stay in context manager until signal.interrupt

@@ -7,9 +7,7 @@ from mavconn import MAVLinkConnection
 class Args:
 
     def __init__(self, ip, loc, system, component):
-        ip_addr_port = ip.split(':')
-        self.ip_addr= ip_addr_port[0]
-        self.ip_port= ip_addr_port[1]
+        self.ip_addr= ip
         self.lat=loc[0]
         self.long=loc[1]
         self.altitude=loc[2]
@@ -45,7 +43,7 @@ def global_position_int_handler(gps_func, reporter):
 def printer(system, component, azimuth, elevation):
     #give as reporter
     # prints system.component: az, el (unicode degree)
-    pass
+    return 
 
 
 def calculate_azimuth_elevation(source, dest):
