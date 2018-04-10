@@ -6,7 +6,7 @@ from mavconn import MAVLinkConnection
 
 class Args:
 
-    def __init__(self, ip, loc, system, component):
+    def __init__(self, ip, loc, system, component, dialect):
         self.ip_addr= ip
         self.lat=loc[0]
         self.long=loc[1]
@@ -14,36 +14,45 @@ class Args:
         self.loc = loc[0], loc[1], loc[2]
         self.mavsystem = system
         self.mavcomponent = component
+        self.dialect = dialect
 
 
-def heartbeat():
-    pass
+def heartbeat(mav):
+    mav.heartbeat_send(type=MAV_TYPE_ANTENNA_TRACKER,
+            autopilot=MAV_AUTOPILOT_GENERIC, base_mode=0, 0,
+                system_status=MAV_STATE_ACTIVE, 0)
 
 
-def static_location(lat, long, alt):
+def static_location(lat, lon, alt):
     def ret_gps():
-        return lat, long, alt
+        return lat, lon, alt
     return ret_gps
 
 
-def global_position_handler(gps_func, reporter):
+def global_position_int_handler(gps_func, reporter):
     #gps_func is what static_location returns
     def gps_handler(mavlinkconn, message):
-        # destination location will get from message
-        # ID and component also comes from message
-        # gives these to the reporter
-        pass
+        #destination location will get from message
+        #ID and component also comes from message
+        #gives these to the reporter
+        gc_lat, gc_lon, gc_alt = gps_func()
+        source = gc_lat, gc_lon, gc_alt
+        ac_lat = message.lat
+        ac_lon = message.lon
+        ac_alt = message.alt
+        dest = ac_lat, ac_lon, ac_alt
+        azimuth, elevation = calculate_azimuth_elevation(source, dest)
+        system = message.get_srcSystem()
+        component = message.get_srcComponent()
+        reporter(system, component, azimuth, elevation)
+        
     return gps_handler
 
 
-def global_position_int_handler(gps_func, reporter):
-    pass
-
-
 def printer(system, component, azimuth, elevation):
-    #give as reporter
+    # give as reporter
     # prints system.component: az, el (unicode degree)
-    return 
+    print('{system}.{component}:   az {azimuth:0.1f}°     el {elevation:0.1f}° '.format(system, component, azimuth, elevation)
 
 
 def calculate_azimuth_elevation(source, dest):
